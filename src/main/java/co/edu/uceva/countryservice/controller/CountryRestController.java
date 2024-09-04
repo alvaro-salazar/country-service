@@ -3,9 +3,13 @@ package co.edu.uceva.countryservice.controller;
 import co.edu.uceva.countryservice.model.entities.Pais;
 import co.edu.uceva.countryservice.model.service.PaisServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Esta clase es el controlador de la entidad Pais y se mapea con la url /api/v1/country-service
@@ -24,8 +28,17 @@ public class CountryRestController {
      * @return retorna una lista de todos los paises
      */
     @GetMapping("/paises")
-    public List<Pais> listar() {
-        return this.paisService.listar();
+    public ResponseEntity<?> listar() { // List  ArrayList    Map  HashMap
+        Map<String, Object> response = new HashMap<>(); // Esto sirve para retornar varios valores de una respuesta http
+        List<Pais> paises = null;
+        try {
+            paises = this.paisService.listar();
+        } catch (Exception e) {
+            response.put("mensaje", "Error al listar los paises");
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+        return new ResponseEntity<List<Pais>>(paises, HttpStatus.OK);
     }
 
     /**
